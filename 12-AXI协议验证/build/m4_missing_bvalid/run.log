@@ -1,0 +1,22 @@
+[ASSERT-FAIL] #15 L1  write always answered within bound : first failure at t=1235000
+[TB] GLOBAL TIMEOUT (possible deadlock/liveness failure)
+- tb/tb_top.sv:139: Verilog $finish
+==================== CHECKER SUMMARY ====================
+antecedent hits (a pass is only meaningful if these are > 0):
+  A1 AW stall cycles      : 1
+  A2 W  stall cycles      : 1
+  A3 AR stall cycles      : 0
+  A4 R  stall cycles      : 0
+  A5 B  stall cycles      : 0
+  A6 BVALID cycles        : 0
+  A7 RVALID cycles        : 0
+  A8 same as A6 / A9 same as A7
+  L1 completed writes     : 1
+  L2 AR handshakes        : 0
+---------------------------------------------------------
+  FAIL #15 L1  write always answered within bound count=999 first_t=1235
+RESULT: FAIL (1 assertion(s) fired)
+=========================================================
+- S i m u l a t i o n   R e p o r t: Verilator 5.054 2026-11-01
+- Verilator: $finish at 1000us; walltime 0.085 s; speed 11.819 ms/s
+- Verilator: cpu 0.084 s on 1 threads; allocated 2 MB

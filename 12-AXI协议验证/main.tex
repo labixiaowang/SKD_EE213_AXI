@@ -1,0 +1,83 @@
+\documentclass[sigconf,nonacm]{acmart}
+
+\usepackage{xeCJK}
+\setCJKmainfont{STSONG.TTF}[Path=C:/Windows/Fonts/,BoldFont=simhei.ttf]
+\setCJKsansfont{simhei.ttf}[Path=C:/Windows/Fonts/,BoldFont=simhei.ttf]
+\setCJKmonofont{simfang.ttf}[Path=C:/Windows/Fonts/]
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{fancyhdr}
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd{\@mkabstract}
+  {\ignorespaces\@abstract\par}
+  {\fontsize{10pt}{12pt}\selectfont\ignorespaces\@abstract\par}
+  {}{\PackageError{coursepaper}{Unable to set abstract font size}{}}
+\makeatother
+
+\settopmatter{printacmref=false}
+\renewcommand\footnotetextcopyrightpermission[1]{}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\scriptsize AXI 总线协议的系统化验证方法}
+\fancyhead[R]{\scriptsize 数字集成电路（2026秋）}
+\fancyfoot[C]{\thepage}
+\setlength{\headheight}{13pt}
+\setlength{\textfloatsep}{4pt}
+\setlength{\floatsep}{4pt}
+\setlength{\intextsep}{4pt}
+\setlength{\abovecaptionskip}{2pt}
+\setlength{\belowcaptionskip}{1pt}
+\setlength{\bibsep}{0pt}
+\setlength{\parskip}{0pt}
+
+\begin{document}
+
+\title{AXI 总线协议的系统化验证方法}
+\author{匿名作者}
+\affiliation{\institution{匿名单位}\city{ }\country{ }}
+\renewcommand{\shortauthors}{AXI 总线协议的系统化验证方法\hfill 数字集成电路（2026秋）}
+
+\begin{abstract}
+片上系统依赖 AXI 完成处理器、存储器和外设之间的数据传输，握手错误可能在背压或并发条件下造成数据丢失，并且难以通过少量定向测试发现。AXI4-Lite 虽不包含突发和乱序事务，其五个独立通道仍要求 VALID、READY 与载荷信号满足严格时序关系。本课题选择一个简单的 AXI4-Lite 寄存器从设备，把基本握手与数据稳定性规则写成 SystemVerilog 断言，并在随机背压下验证若干已知错误。最终以错误检出情况、首次触发周期和对应波形说明断言能否准确定位协议违例。
+\end{abstract}
+
+\keywords{AXI，总线协议，断言验证，覆盖率，形式验证，SystemVerilog}
+\maketitle
+\thispagestyle{plain}
+\fontsize{10pt}{12pt}\selectfont
+
+\section{引言}
+AXI 是 AMBA 体系中的高性能片上接口，五个独立通道通过 VALID/READY 完成去耦握手。协议允许地址与数据独立背压、多个未完成事务和基于 ID 的顺序控制，这些特性提升并发度，也显著扩大了验证状态空间~\cite{arm2020axi}。常见错误包括 VALID 依赖 READY、握手前载荷变化、突发长度或地址边界错误、响应遗漏以及读写关联失配。
+
+五个通道的独立性是 AXI 验证困难的主要来源。写地址、写数据和写响应可以以不同节奏推进，读地址与读数据也可独立背压；局部握手均合法，并不保证端到端事务关联正确。多个 ID 和未完成事务进一步引入“同一 ID 内有序、不同 ID 间可交错”等约束。验证环境如果只检查单通道波形，可能遗漏地址与数据错配、响应归属错误或资源耗尽后的死锁。因此，需要把局部协议属性和跨通道事务模型分层组织。
+
+传统定向测试适合快速覆盖已知场景，但难以组合所有背压和乱序条件；约束随机验证能够扩大输入空间，却需要参考模型和覆盖率判断何时“足够”；形式验证可穷举有限状态空间，但对环境假设、深度和状态爆炸敏感。SystemVerilog 提供并发断言、覆盖和约束随机机制，为三类方法建立统一属性语言~\cite{ieee2017sv,foster2009abv}；UVM 标准与系统化测试平台方法可进一步组织事务、代理、记分板和覆盖模型~\cite{ieee2020uvm,bergeron2006testbenches}。
+
+核心研究问题为：针对一个 AXI4-Lite 从设备，一组由协议规则直接编写的断言能否在随机背压测试中准确发现预先注入的握手与数据稳定性错误？
+
+\section{背景与相关工作}
+AXI 通过五个相互独立的通道传递读写地址、写数据、读数据和写响应。每个通道以 $VALID\land READY$ 表示一次传输；源端在等待握手期间必须保持 VALID 和载荷稳定，而接收端可以独立控制 READY~\cite{arm2020axi}。AXI4-Lite 去除了突发和事务 ID，但读写通道仍可分别背压，因而已经包含协议验证中最基本的并发关系。
+
+协议性质通常分为安全性、活性和数据一致性。安全性描述不允许出现的行为，例如握手完成前改变地址或数据；活性描述合法请求是否最终得到响应；数据一致性关注被接受的地址、数据和响应是否属于同一事务。三类性质依赖的信息范围不同：局部握手规则只需观察少量周期，跨通道关联则需要保存事务状态。
+
+SystemVerilog 并发断言为时序性质提供了标准表达方式~\cite{ieee2017sv,foster2009abv}。动态验证可以通过定向或随机激励探索较长事务，形式验证能够在给定环境假设下搜索所有状态；UVM 则使用事务、代理、监视器和记分板组织较大的验证环境~\cite{ieee2020uvm,bergeron2006testbenches}。这些方法覆盖范围不同，也可以共享同一组协议规则。
+
+验证结果“没有报错”并不等于属性充分。属性可能从未进入有效检查状态，也可能表达得过宽或过窄；测试激励也可能没有覆盖背压和通道交错。缺陷注入提供了一种评价检查器本身的方法：把已知协议错误作为目标，观察验证机制能否在对应条件下准确触发并给出可解释反例。
+
+\section{方法框架（仅供参考）}
+选择一个结构简单的 AXI4-Lite 从设备，并从协议中确定一小组最重要的握手、载荷稳定性或响应规则。验证方法可以使用 SystemVerilog 断言，也可以结合记分板、随机测试或有限状态形式检查。随后选择少量与这些规则直接对应的错误进行缺陷注入。具体属性数量和错误类型不作固定要求，但每个错误都应能够追溯到一条明确协议条款。
+
+\section{实验设计与研究实施（仅供参考）}
+建议先从协议规范提取规则，再建立正确设计基线和少量错误版本。对正确版本检查误报，对错误版本检查目标错误能否被发现；激励可以包含定向场景、随机背压或二者组合。主要结果用“协议规则--注入错误--检查结果”表和代表性失败波形呈现，并说明每个检查条件是否实际被覆盖。课题只需围绕少量基本规则形成完整闭环，不必扩展到完整 AXI4 或大型 UVM 环境。
+
+\section{可能遇到的挑战}
+可能遇到的挑战是断言前件从未发生，使断言看似通过却没有真正检查协议。应统计每条断言的触发次数，并为未覆盖的前件构造最短定向序列。本课题只验证 AXI4-Lite 的基本握手、载荷稳定性和响应规则，不扩展到突发、事务 ID 或乱序。
+
+\section{结论}
+
+\bibliographystyle{ACM-Reference-Format}
+\bibliography{references}
+
+\end{document}

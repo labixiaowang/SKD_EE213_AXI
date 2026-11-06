@@ -1,0 +1,150 @@
+[ASSERT-FAIL] #11 A6  BVALID only after a completed write : first failure at t=345000
+[SB-MISMATCH] t=1920000 addr=0x04 dut=0xfb870000 model=0x0000547d
+[SB-MISMATCH] t=2060000 addr=0x08 dut=0xefabb33d model=0x78350000
+[SB-MISMATCH] t=2110000 addr=0x08 dut=0xefabb33d model=0x78350000
+[SB-MISMATCH] t=2150000 addr=0x04 dut=0xfb870000 model=0x0000547d
+[SB-MISMATCH] t=2250000 addr=0x00 dut=0x0c340077 model=0xa88d4525
+[SB-MISMATCH] t=2360000 addr=0x00 dut=0x0c340077 model=0xa88d4525
+[SB-MISMATCH] t=2950000 addr=0x0c dut=0x0c34000e model=0x0c34b33d
+[SB-MISMATCH] t=3030000 addr=0x00 dut=0xdb975677 model=0xdb975625
+[SB-MISMATCH] t=3140000 addr=0x08 dut=0xefab6c06 model=0x78356c06
+[SB-MISMATCH] t=3580000 addr=0x00 dut=0xdb975677 model=0xdb975625
+[SB-MISMATCH] t=5030000 addr=0x00 dut=0x278bd4d9 model=0x797fd4d9
+[SB-MISMATCH] t=5160000 addr=0x0c dut=0x0c34000e model=0x0c34b33d
+[SB-MISMATCH] t=5280000 addr=0x0c dut=0x0c34000e model=0x0c34b33d
+[SB-MISMATCH] t=6040000 addr=0x04 dut=0x888a0cab model=0x738a0c1b
+[TB] 50/300 transactions done
+[SB-MISMATCH] t=6130000 addr=0x08 dut=0xefccd4d9 model=0x88a645ab
+[SB-MISMATCH] t=6240000 addr=0x00 dut=0x798bd4d9 model=0x79ccd4d9
+[SB-MISMATCH] t=6330000 addr=0x00 dut=0x798bd4d9 model=0x79ccd4d9
+[SB-MISMATCH] t=7150000 addr=0x00 dut=0xea8bf582 model=0x3661a4c1
+[SB-MISMATCH] t=7570000 addr=0x08 dut=0xefccd4d9 model=0x88a645ab
+[SB-MISMATCH] t=8020000 addr=0x00 dut=0x8103f582 model=0x8103a4c1
+[SB-MISMATCH] t=8510000 addr=0x00 dut=0x8103f582 model=0x8103a4c1
+[SB-MISMATCH] t=8930000 addr=0x00 dut=0x81c50682 model=0xca03a8ed
+[SB-MISMATCH] t=8990000 addr=0x08 dut=0xf3cca201 model=0xf3c50601
+[SB-MISMATCH] t=9080000 addr=0x00 dut=0x81c50682 model=0xca03a8ed
+[SB-MISMATCH] t=9200000 addr=0x0c dut=0x8103a4c1 model=0x0c34a27f
+[SB-MISMATCH] t=9300000 addr=0x0c dut=0x8103a4c1 model=0x0c34a27f
+[SB-MISMATCH] t=9600000 addr=0x00 dut=0x81c50682 model=0xca03a8ed
+[SB-MISMATCH] t=9700000 addr=0x0c dut=0x8103a4c1 model=0x0c34a27f
+[SB-MISMATCH] t=9760000 addr=0x0c dut=0x8103a4c1 model=0x0c34a27f
+[SB-MISMATCH] t=9850000 addr=0x0c dut=0x8103a4c1 model=0x0c34a27f
+[SB-MISMATCH] t=10100000 addr=0x0c dut=0x8103a4c1 model=0x0c34a27f
+[SB-MISMATCH] t=10200000 addr=0x0c dut=0x8103a4c1 model=0x0c34a27f
+[SB-MISMATCH] t=10680000 addr=0x04 dut=0xe6f4d6ed model=0xe6f4d682
+[SB-MISMATCH] t=10760000 addr=0x0c dut=0x81035041 model=0x0c345041
+[SB-MISMATCH] t=11230000 addr=0x04 dut=0xe6899fed model=0xe6899f82
+[SB-MISMATCH] t=11860000 addr=0x08 dut=0xf3cca201 model=0xf7a606d9
+[TB] 100/300 transactions done
+[SB-MISMATCH] t=12620000 addr=0x08 dut=0xf3cca201 model=0xf7a606d9
+[SB-MISMATCH] t=13190000 addr=0x08 dut=0xf3cca201 model=0xf7a606d9
+[SB-MISMATCH] t=13260000 addr=0x00 dut=0x33554179 model=0x21557fed
+[SB-MISMATCH] t=13640000 addr=0x08 dut=0x73cc1d01 model=0x73a61dd9
+[SB-MISMATCH] t=13700000 addr=0x08 dut=0x73cc1d01 model=0x73a61dd9
+[SB-MISMATCH] t=13870000 addr=0x00 dut=0x33554179 model=0x21557fed
+[SB-MISMATCH] t=14430000 addr=0x08 dut=0x6fcc6dc8 model=0x7ec212d9
+[SB-MISMATCH] t=15180000 addr=0x00 dut=0x33554179 model=0x21557fed
+[SB-MISMATCH] t=15490000 addr=0x0c dut=0xdd404179 model=0x335e413e
+[SB-MISMATCH] t=15770000 addr=0x08 dut=0x11bc2a35 model=0x115a723d
+[SB-MISMATCH] t=16110000 addr=0x00 dut=0x33554179 model=0x21557fed
+[SB-MISMATCH] t=16670000 addr=0x00 dut=0x33554179 model=0x21557fed
+[SB-MISMATCH] t=16800000 addr=0x00 dut=0x33554179 model=0x21557fed
+[SB-MISMATCH] t=16860000 addr=0x04 dut=0xe87ef23e model=0xe87ef2c8
+[SB-MISMATCH] t=16970000 addr=0x0c dut=0xdd5a723d model=0x58b6f83e
+[SB-MISMATCH] t=17060000 addr=0x00 dut=0x33554179 model=0x21557fed
+[SB-MISMATCH] t=17340000 addr=0x08 dut=0xe87ef2c0 model=0x145a0b41
+[SB-MISMATCH] t=17570000 addr=0x0c dut=0xdd5a723d model=0x58b6f83e
+[SB-MISMATCH] t=17640000 addr=0x04 dut=0x147ef241 model=0xe86329dc
+[SB-MISMATCH] t=17950000 addr=0x04 dut=0x387e1e41 model=0x38631edc
+[SB-MISMATCH] t=18460000 addr=0x04 dut=0x387e1e41 model=0x38631edc
+[TB] 150/300 transactions done
+[SB-MISMATCH] t=18750000 addr=0x08 dut=0xe81388f7 model=0x141388f7
+[SB-MISMATCH] t=19160000 addr=0x08 dut=0xe85988f7 model=0x145988f7
+[SB-MISMATCH] t=19660000 addr=0x00 dut=0x331388f7 model=0xa997eab1
+[SB-MISMATCH] t=19760000 addr=0x04 dut=0x387e1e41 model=0x38631edc
+[SB-MISMATCH] t=19880000 addr=0x0c dut=0x90759674 model=0x90a29d63
+[SB-MISMATCH] t=19980000 addr=0x00 dut=0x331388f7 model=0xa997eab1
+[SB-MISMATCH] t=20490000 addr=0x0c dut=0x90759674 model=0x90a29d63
+[SB-MISMATCH] t=21390000 addr=0x04 dut=0x387e9d41 model=0x5a635919
+[SB-MISMATCH] t=21430000 addr=0x08 dut=0xae59444c model=0xaec7b060
+[SB-MISMATCH] t=21940000 addr=0x00 dut=0x37553196 model=0x8055e90d
+[SB-MISMATCH] t=22510000 addr=0x04 dut=0xd155e996 model=0x37633119
+[SB-MISMATCH] t=22580000 addr=0x04 dut=0xd155e996 model=0x37633119
+[SB-MISMATCH] t=22970000 addr=0x08 dut=0x28b15132 model=0x17105166
+[SB-MISMATCH] t=23270000 addr=0x04 dut=0xd155e996 model=0x37633119
+[SB-MISMATCH] t=23770000 addr=0x08 dut=0x285bb732 model=0x175bb766
+[SB-MISMATCH] t=24050000 addr=0x08 dut=0x285bb732 model=0x175bb766
+[SB-MISMATCH] t=24400000 addr=0x08 dut=0x285bb732 model=0x175bb766
+[SB-MISMATCH] t=25410000 addr=0x08 dut=0x285bb732 model=0x175bb766
+[SB-MISMATCH] t=25530000 addr=0x00 dut=0x5cdbba10 model=0x1adbba10
+[SB-MISMATCH] t=25640000 addr=0x0c dut=0x465bb747 model=0x46646a47
+[TB] 200/300 transactions done
+[SB-MISMATCH] t=26020000 addr=0x0c dut=0x465bb747 model=0x46646a47
+[SB-MISMATCH] t=26160000 addr=0x0c dut=0x465bb747 model=0x46646a47
+[SB-MISMATCH] t=26230000 addr=0x08 dut=0x285bb732 model=0x175bb766
+[SB-MISMATCH] t=26350000 addr=0x04 dut=0xd155e996 model=0x37633119
+[SB-MISMATCH] t=26910000 addr=0x04 dut=0xbbebe9cf model=0x7863c119
+[SB-MISMATCH] t=27020000 addr=0x0c dut=0xbbebb7cf model=0xbbeb6acf
+[SB-MISMATCH] t=27080000 addr=0x00 dut=0x5cdbba10 model=0x1a2dba10
+[SB-MISMATCH] t=27190000 addr=0x08 dut=0x285bb732 model=0x175bb766
+[SB-MISMATCH] t=27360000 addr=0x08 dut=0x285bb732 model=0x175bb766
+[SB-MISMATCH] t=27410000 addr=0x04 dut=0xbbebe9cf model=0x7863c119
+[SB-MISMATCH] t=27520000 addr=0x08 dut=0x285bb732 model=0x175bb766
+[SB-MISMATCH] t=27600000 addr=0x0c dut=0xbbebb7cf model=0xbbeb6acf
+[SB-MISMATCH] t=27830000 addr=0x04 dut=0xbbebe969 model=0x7863c169
+[SB-MISMATCH] t=27970000 addr=0x00 dut=0x38dbba10 model=0x382dba10
+[SB-MISMATCH] t=29530000 addr=0x0c dut=0xe7765757 model=0x2b76577e
+[SB-MISMATCH] t=29630000 addr=0x00 dut=0x38dbba10 model=0x382dba10
+[SB-MISMATCH] t=29720000 addr=0x04 dut=0xe7765757 model=0x6f632cd1
+[SB-MISMATCH] t=30240000 addr=0x04 dut=0xe7765757 model=0x6f632cd1
+[SB-MISMATCH] t=30540000 addr=0x04 dut=0xe7765757 model=0x6f632cd1
+[SB-MISMATCH] t=30700000 addr=0x00 dut=0xfa0ba733 model=0xfa2dd795
+[SB-MISMATCH] t=30810000 addr=0x04 dut=0xe7765757 model=0x6f632cd1
+[SB-MISMATCH] t=31050000 addr=0x00 dut=0xfa0ba795 model=0x362dd745
+[SB-MISMATCH] t=31240000 addr=0x04 dut=0xe7765757 model=0x6f632cd1
+[SB-MISMATCH] t=31290000 addr=0x04 dut=0xe7765757 model=0x6f632cd1
+[TB] 250/300 transactions done
+[SB-MISMATCH] t=32230000 addr=0x00 dut=0x370b0fcc model=0x372d0fcc
+[SB-MISMATCH] t=33180000 addr=0x08 dut=0x375b0fd2 model=0x835bbfd2
+[SB-MISMATCH] t=34180000 addr=0x08 dut=0xc65bfcc6 model=0xc6befcc6
+[SB-MISMATCH] t=34390000 addr=0x08 dut=0xc65bfcc6 model=0xc6befcc6
+[SB-MISMATCH] t=34440000 addr=0x08 dut=0xc65bfcc6 model=0xc6befcc6
+[SB-MISMATCH] t=34800000 addr=0x08 dut=0xc6a5fcc6 model=0xc6d697c6
+[SB-MISMATCH] t=34930000 addr=0x00 dut=0x75fd9ab1 model=0x754c0faf
+[SB-MISMATCH] t=35010000 addr=0x08 dut=0xc6a5fcc6 model=0xc6d697c6
+[SB-MISMATCH] t=35350000 addr=0x04 dut=0x30280f89 model=0x30a50f89
+[SB-MISMATCH] t=35930000 addr=0x00 dut=0x75fd9ab1 model=0x754c0faf
+[SB-MISMATCH] t=36000000 addr=0x08 dut=0x02a5a625 model=0x02d6a625
+[SB-MISMATCH] t=36110000 addr=0x04 dut=0x30280f89 model=0x30a50f89
+[SB-MISMATCH] t=36220000 addr=0x00 dut=0x75fd9ab1 model=0x754c0faf
+[SB-MISMATCH] t=36320000 addr=0x08 dut=0x02a5a625 model=0x02d6a625
+[SB-MISMATCH] t=36440000 addr=0x04 dut=0x30280f89 model=0x30a50f89
+[SB-MISMATCH] t=36710000 addr=0x0c dut=0x02f5a625 model=0x38f5ed58
+[SB-MISMATCH] t=37460000 addr=0x04 dut=0x30280f89 model=0x30a50f89
+[SB-MISMATCH] t=37600000 addr=0x0c dut=0x02cefd45 model=0x38cefd45
+[SB-MISMATCH] t=37900000 addr=0x00 dut=0x7561ba1f model=0x3cdaba04
+[SB-MISMATCH] t=38190000 addr=0x00 dut=0x7561ba1f model=0x3cdaba04
+[SB-MISMATCH] t=38280000 addr=0x0c dut=0x02cefd45 model=0x38cefd45
+[TB] 300/300 transactions done
+[TB] done; scoreboard errors=122
+- tb/tb_top.sv:132: Verilog $finish
+==================== CHECKER SUMMARY ====================
+antecedent hits (a pass is only meaningful if these are > 0):
+  A1 AW stall cycles      : 135
+  A2 W  stall cycles      : 150
+  A3 AR stall cycles      : 155
+  A4 R  stall cycles      : 202
+  A5 B  stall cycles      : 662
+  A6 BVALID cycles        : 809
+  A7 RVALID cycles        : 355
+  A8 same as A6 / A9 same as A7
+  L1 completed writes     : 147
+  L2 AR handshakes        : 153
+---------------------------------------------------------
+  FAIL #11 A6  BVALID only after a completed write count=458 first_t=345
+RESULT: FAIL (1 assertion(s) fired)
+=========================================================
+- S i m u l a t i o n   R e p o r t: Verilator 5.054 2026-11-01
+- Verilator: $finish at 38us; walltime 0.004 s; speed 10.912 ms/s
+- Verilator: cpu 0.004 s on 1 threads; allocated 2 MB

@@ -1,0 +1,22 @@
+[ASSERT-FAIL] #6 A4a RVALID held until RREADY : first failure at t=505000
+[TB] GLOBAL TIMEOUT (possible deadlock/liveness failure)
+- tb/tb_top.sv:139: Verilog $finish
+==================== CHECKER SUMMARY ====================
+antecedent hits (a pass is only meaningful if these are > 0):
+  A1 AW stall cycles      : 2
+  A2 W  stall cycles      : 1
+  A3 AR stall cycles      : 0
+  A4 R  stall cycles      : 1
+  A5 B  stall cycles      : 4
+  A6 BVALID cycles        : 6
+  A7 RVALID cycles        : 1
+  A8 same as A6 / A9 same as A7
+  L1 completed writes     : 2
+  L2 AR handshakes        : 1
+---------------------------------------------------------
+  FAIL #6 A4a RVALID held until RREADY           count=1 first_t=505
+RESULT: FAIL (1 assertion(s) fired)
+=========================================================
+- S i m u l a t i o n   R e p o r t: Verilator 5.054 2026-11-01
+- Verilator: $finish at 1000us; walltime 0.083 s; speed 12.102 ms/s
+- Verilator: cpu 0.082 s on 1 threads; allocated 2 MB

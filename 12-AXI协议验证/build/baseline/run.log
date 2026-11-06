@@ -1,0 +1,26 @@
+[TB] 50/300 transactions done
+[TB] 100/300 transactions done
+[TB] 150/300 transactions done
+[TB] 200/300 transactions done
+[TB] 250/300 transactions done
+[TB] 300/300 transactions done
+[TB] done; scoreboard errors=0
+- tb/tb_top.sv:190: Verilog $finish
+==================== CHECKER SUMMARY ====================
+antecedent hits (a pass is only meaningful if these are > 0):
+  A1 AW stall cycles      : 135
+  A2 W  stall cycles      : 150
+  A3 AR stall cycles      : 155
+  A4 R  stall cycles      : 202
+  A5 B  stall cycles      : 204
+  A6 BVALID cycles        : 351
+  A7 RVALID cycles        : 355
+  A8 same as A6 / A9 same as A7
+  L1 completed writes     : 147
+  L2 AR handshakes        : 153
+---------------------------------------------------------
+RESULT: PASS (no assertion fired)
+=========================================================
+- S i m u l a t i o n   R e p o r t: Verilator 5.054 2026-11-01
+- Verilator: $finish at 38us; walltime 0.003 s; speed 11.377 ms/s
+- Verilator: cpu 0.003 s on 1 threads; allocated 2 MB

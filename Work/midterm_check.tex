@@ -1,0 +1,204 @@
+\documentclass[12pt, a4paper, oneside]{ctexart}
+\usepackage{booktabs}
+\usepackage{amsmath, amsthm, amssymb, bm, xcolor, framed, graphicx, hyperref, mathrsfs,extarrows}
+\title{\textbf{12-AXI协议验证中期检查}}
+\author{王新鑫 2026234255}
+\date{\today}
+\pagestyle{plain}
+\usepackage{float}
+\usepackage{tabularx}
+\newcolumntype{C}{>{\centering\arraybackslash}X}
+\usepackage[top=2.2cm, bottom=2.2cm, left=2.5cm, right=2.5cm]{geometry}
+\linespread{1.5}
+\ctexset{
+  section/format = \Large\bfseries\raggedright,       % 一级标题靠左
+  subsection/format = \large\bfseries\raggedright,    % 二级标题靠左
+  subsubsection/format = \normalsize\bfseries\raggedright, % 三级标题靠左
+  figurename = Figure,
+  tablename = Table
+}
+
+\usepackage{listings}
+\lstset{
+  basicstyle=\ttfamily\small,   % 等宽字体,小号
+  numbers=left,                 % 左侧行号
+  numberstyle=\tiny\color{gray},
+  frame=single,                 % 外框
+  breaklines=true,              % 长行自动换行
+  columns=flexible
+}
+\definecolor{shadecolor}{RGB}{241, 241, 255} %可以选择自己喜欢的颜色
+
+% \newcounter{problemname}
+% % 这一部分可以设置自己需要的模块
+% \newenvironment{problem}{\begin{shaded}\stepcounter{problemname}\par\noindent\textbf{题目\arabic{problemname}. }}{\end{shaded}\par}
+% \newenvironment{solution}{\par\noindent\textbf{解答. }}{\par}
+% \newenvironment{note}{\par\noindent\textbf{题目\arabic{problemname}的注记. }}{\par}
+% \newenvironment{ProblemList}{\par\noindent\textbf{题单. }}{\par}
+% 设置文档的背景,显示背景请编译两次(需要 logo-RUC.png,暂缺故注释)
+%\usepackage{background}
+%\backgroundsetup{scale=0.6, angle=0, opacity = 1,contents = {\includegraphics[width=\paperwidth, height=\paperwidth, keepaspectratio]{logo-RUC.png}}}
+\begin{document}
+
+\maketitle
+
+\section{课题目标回顾}
+
+本课题的核心研究问题为：\textbf{针对一个 AXI4-Lite 从设备，一组由协议规则直接编写的 SystemVerilog 断言，能否在随机背压测试中准确发现预先注入的握手与数据稳定性错误？}
+
+围绕该问题，课题分解为四项具体任务：
+\begin{enumerate}
+  \item 实现一个结构简单的 AXI4-Lite 寄存器从设备作为验证对象（DUT）；
+  \item 从 AXI 协议规范（ARM IHI 0022）中提取基本握手与数据稳定性规则，编写为 SystemVerilog 断言（SVA），每条断言可追溯到明确的协议条款；
+  \item 搭建带随机背压的仿真验证环境，对正确设计检查误报、对注入错误的设计检查检出情况；
+  \item 通过缺陷注入（fault injection）评价检查器本身，形成``协议规则---注入错误---检查结果''的完整闭环，并统计每条断言前件的触发次数以排除``空洞通过''。
+\end{enumerate}
+
+\section{已完成工作}
+
+\subsection{验证对象与协议规则提取}
+
+已实现验证对象：一个含 4 个 32 位寄存器的 AXI4-Lite 从设备（\texttt{rtl/axi4lite\_slave.sv}），支持字节使能写、OKAY 响应。设计中用 LFSR 对三个 READY 信号做伪随机节流，使从设备能够以协议允许的方式随机``装忙''，从而自然产生 VALID 有效而 READY 未就绪的停顿周期，为稳定性断言创造被检查的条件。
+
+从 ARM IHI 0022 中提取并实现了 17 条协议检查（\texttt{sva/axi4lite\_checker.sv}），分为四类，如表~\ref{tab:rules} 所示。
+
+\begin{table}[H]
+\centering
+\caption{协议检查清单及其条款出处}
+\label{tab:rules}
+\begin{tabularx}{\textwidth}{lXl}
+\toprule
+编号 & 性质 & 协议条款（IHI 0022） \\
+\midrule
+A1a/A1b, A2a/A2b, A3a/A3b & AW/W/AR 通道 VALID 保持与载荷稳定 & A3.2.1 / A3.2.2 \\
+A4a/A4b/A4c & R 通道 VALID、RDATA、RRESP 稳定性 & A3.2.1 / A3.2.2 \\
+A5a/A5b & B 通道 VALID 与 BRESP 稳定性 & A3.2.1 / A3.2.2 \\
+A6 & BVALID 之前必须存在完整的写事务（AW 与 W 均握手） & A3.3.1 \\
+A7 & RVALID 之前必须存在被接受的读地址 & A3.4.1 \\
+A8/A9 & 本设计只返回 OKAY 响应 & 设计规格 \\
+L1/L2 & 已接受的事务必须在有界周期内得到响应 & 活性 / 死锁自由 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+其中 A1$\sim$A5 为标准的并发断言，例如 R 通道数据稳定性：
+\begin{lstlisting}[language=Verilog]
+property p_rdata_stable;
+    @(posedge aclk) disable iff (!aresetn)
+    (s_axi_rvalid && !s_axi_rready) |=> $stable(s_axi_rdata);
+endproperty
+\end{lstlisting}
+
+A6/A7 属于跨通道性质，单周期波形无法判断，检查器内部维护一组事务计数器（$n_{aw}, n_w, n_b, n_{ar}, n_r$ 分别记录五个通道的握手总次数），以 $\min(n_{aw}, n_w) - n_b$ 表示``已完整收到而尚未回应的写事务数''，据此断言响应的合法性。L1/L2 的活性性质因开源仿真器对无界 \texttt{s\_eventually} 支持有限，实现为 100 周期上界的看门狗。
+
+\subsection{验证环境搭建}
+
+基于开源仿真器 Verilator 5.054 搭建了完整仿真环境（\texttt{tb/tb\_top.sv}），包含：
+\begin{itemize}
+  \item \textbf{主设备 BFM}：随机发起读写交易（300 笔/轮），AW 与 W 到达顺序随机（各 50\%），VALID 发起前随机停顿 0$\sim$8 拍，BREADY/RREADY 每拍按 75\% 概率给出，对从设备形成随机背压；
+  \item \textbf{记分板}：软件参考模型与 DUT 独立推演每笔交易，比对读数据，检查断言难以表达的数据一致性问题；
+  \item \textbf{收尾机制}：全局超时（10 万拍，捕获活性失败导致的死锁）与 VCD 波形转储（供失败场景复盘）。
+\end{itemize}
+
+环境搭建过程中解决了两个工程问题：其一，conda 版 Verilator 按完整三元组名称调用其配套编译器，需在 Makefile 中将对应工具链目录加入 \texttt{PATH}；其二，本机缺少 FST 波形所需的 lz4 库，改用 VCD 格式输出波形。
+
+\subsection{防``空洞通过''设计}
+
+验证结果``没有报错''并不等于属性被真正检查：若某条断言的前件（antecedent，如 $VALID \land \lnot READY$ 的停顿条件）在整个仿真中从未发生，则该断言的``通过''没有任何信息量。针对这一风险，检查器为每条断言统计前件触发次数，并在仿真结束时输出汇总表。
+
+基线实验（300 笔随机交易）中各前件均有充分覆盖，如表~\ref{tab:coverage} 所示，说明 PASS 结果可信。
+
+\begin{table}[H]
+\centering
+\caption{基线实验中各断言前件的触发统计}
+\label{tab:coverage}
+\begin{tabular}{lccccc}
+\toprule
+前件 & AW 停顿 & W 停顿 & AR 停顿 & R 停顿 & B 停顿 \\
+\midrule
+触发次数 & 135 & 150 & 155 & 202 & 204 \\
+\midrule
+前件 & BVALID 周期 & RVALID 周期 & 完成写事务 & AR 握手 & \\
+\midrule
+触发次数 & 351 & 355 & 147 & 153 & \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{缺陷注入实验}
+
+为评价检查器本身，构造了 5 个各注入一处协议错误的缺陷版本（\texttt{mutants/} 目录），每个错误可直接追溯到一条协议条款。在完全相同的随机激励下分别仿真，结果如表~\ref{tab:mutants} 所示。
+
+\begin{table}[H]
+\centering
+\caption{缺陷注入实验结果}
+\label{tab:mutants}
+\begin{tabularx}{\textwidth}{lXlll}
+\toprule
+版本 & 注入错误 & 违反条款 & 检出断言 & 首次触发时刻 \\
+\midrule
+m1 & RVALID 未等握手即撤销 & A3.2.1 & A4a & 505 ns（随后死锁超时） \\
+m2 & 停顿期间 RDATA 变化 & A3.2.2 & A4b & 505 ns（记分板 153 次失配） \\
+m3 & W 握手前给出 BVALID & A3.3.1 & A6 & 345 ns（记分板 122 次失配） \\
+m4 & 写事务永远无响应 & 活性 & L1 & 1235 ns（随后死锁超时） \\
+m5 & 读响应误为 SLVERR & 设计规格 & A9 & 495 ns \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+结果表明：\textbf{5 个注入错误全部被检出，且每个错误仅被其对应的预期断言命中}（无误报、无串报）；基线版本在 300 笔随机交易下无任何断言触发、记分板零失配。研究问题得到初步的肯定回答。
+
+% TODO: 终期报告前插入代表性失败波形截图，建议：
+%   m2 (t=505ns 附近, RDATA 在 RVALID&&!RREADY 期间变化) 和
+%   m3 (t=345ns 附近, BVALID 在 W 握手前拉高)
+% 波形文件位于 build/<版本>/wave.vcd，可用 GTKWave 打开。
+% \begin{figure}[H]
+%   \centering
+%   \includegraphics[width=0.9\textwidth]{m2_waveform.png}
+%   \caption{m2 缺陷的检出波形：停顿期间 RDATA 发生变化}
+% \end{figure}
+
+\section{遇到的问题与解决}
+
+\begin{enumerate}
+  \item \textbf{断言的``空洞通过''风险}：断言前件若不触发，``通过''无意义。解决方法：为每条断言增加前件触发计数，仿真结束输出汇总表，只有前件计数大于零的 PASS 才被采信（见表~\ref{tab:coverage}）。
+  \item \textbf{无界活性难以在开源仿真器中表达}：标准 SVA 的 \texttt{s\_eventually} 在 Verilator 中支持有限，且``最终响应''在有限仿真中不可判定。解决方法：改用以 100 周期为上界的看门狗计数器实现有界活性检查。
+  \item \textbf{跨通道合法性无法单周期判断}：响应是否合法取决于历史握手情况。解决方法：在检查器中引入事务计数器建模在途事务（$n_{aw}, n_w, n_b$ 等），将跨通道性质转化为对计数器状态的断言。
+\end{enumerate}
+
+\section{后续计划}
+
+\textbf{必做内容：}
+\begin{enumerate}
+  \item 截取代表性失败波形（m2 的 RDATA 停顿期变化、m3 的提前 BVALID 等），作为报告核心证据图；
+  \item 更换随机种子多轮重复实验（\texttt{./simv +verilator+seed=N}），统计各缺陷版本在不同激励序列下的检出稳定性；
+  \item 撰写终期报告，将``协议规则---注入错误---检查结果''表、前件覆盖数据与失败波形整理成完整闭环，并讨论断言方法的能力边界（如纯数据一致性需记分板配合）。
+\end{enumerate}
+
+\textbf{选做内容（视进度）：}
+\begin{enumerate}
+  \item 增加 1$\sim$2 个更隐蔽的缺陷（如字节使能写错字节，仅能被记分板检出），用于讨论断言与记分板的职责分工；
+  \item 使用 \texttt{verilator\_coverage} 补充代码覆盖率数据，进一步完善``检查条件是否实际被覆盖''的论证。
+\end{enumerate}
+
+\section{进度对照}
+
+\begin{table}[H]
+\centering
+\caption{计划进度与实际进度对照}
+\begin{tabularx}{\textwidth}{lXl}
+\toprule
+阶段 & 计划内容 & 实际完成情况 \\
+\midrule
+规则提取与基线设计 & 从协议提取规则、实现无错误基线 & 已完成：17 条断言，基线零误报 \\
+随机验证环境 & 随机背压 BFM、记分板、超时与波形 & 已完成 \\
+缺陷注入与评价 & 注入若干错误并验证断言检出能力 & 已完成主体：5 个缺陷全部检出且定位准确 \\
+波形分析与证据整理 & 截取失败波形、多种子重复实验 & 进行中：波形已生成，待整理截图 \\
+终期报告撰写 & 形成完整报告 & 未开始 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+综上，课题核心验证闭环已经跑通，主要实验数据齐备，后续工作以证据整理、补充实验和报告撰写为主，进度符合预期。
+
+\end{document}
